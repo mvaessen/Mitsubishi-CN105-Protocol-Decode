@@ -15,8 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "EcodanDecoder.h"
+#include "config.h"
+#include "Debug.h"
 
-//#include <arduino.h>
+#include <arduino.h>
 
 ECODANDECODER::ECODANDECODER(void)
 {
@@ -32,13 +34,13 @@ uint8_t ECODANDECODER::Process(uint8_t c)
 {
   uint8_t ReturnValue = false;
 
-  if (BuildRxMessage(&RxMessage , c))
-  {
+  if (BuildRxMessage(&RxMessage , c)) {
+
     ReturnValue = true;
-    if (RxMessage.PacketType == GET_RESPONSE)
-    {
-      switch (RxMessage.Payload[0])
-      {
+
+    if (RxMessage.PacketType == GET_RESPONSE) {
+
+      switch (RxMessage.Payload[0]) {
         case 0x01 :
           Process0x01(RxMessage.Payload, &Status);
           break;
@@ -100,17 +102,14 @@ uint8_t ECODANDECODER::BuildRxMessage(MessageStruct *Message, uint8_t c)
   static uint8_t PayloadSize = 0;
   uint8_t i;
 
-  if (BufferPos < HEADERSIZE)
-  {
-    switch (BufferPos)
-    {
+  if (BufferPos < HEADERSIZE) {
+    switch (BufferPos) {
       case 0 :
         if ( c != PACKET_SYNC ) return false;
         break;
 
       case 1:
-        switch (c)
-        {
+        switch (c) {
           case SET_REQUEST :
             break;
           case SET_RESPONSE :
@@ -128,25 +127,35 @@ uint8_t ECODANDECODER::BuildRxMessage(MessageStruct *Message, uint8_t c)
           case EXCONNECT_RESPONSE:
             break;
           default:
-            //Serial.println("Unknown PacketType");
+          
+            if(USE_SERIAL && VERBOSE) {
+              Serial.println("Unknown PacketType");
+            }
+            
             BufferPos = 0;
             return false;  // Unknown Packet Type
         }
         break;
 
       case 2:
-        if ( c != Preamble[0] )
-        {
-          //Serial.println("Preamble 1 Error");
+        if ( c != Preamble[0] ) {
+
+          if(USE_SERIAL && VERBOSE) {
+            Serial.println("Preamble 1 Error");
+          }
+          
           BufferPos = 0;
           return false;
         }
         break;
 
       case 3:
-        if ( c != Preamble[1] )
-        {
-          //Serial.println("Preamble 1 Error");
+        if ( c != Preamble[1] ) {
+
+          if(USE_SERIAL && VERBOSE) {
+            Serial.println("Preamble 1 Error");
+          }
+
           BufferPos = 0;
           return false;
         }
@@ -154,9 +163,12 @@ uint8_t ECODANDECODER::BuildRxMessage(MessageStruct *Message, uint8_t c)
 
       case 4:
         PayloadSize = c;
-        if (c > MAXDATABLOCKSIZE)
-        {
-          //Serial.println("Oversize Payload");
+        if (c > MAXDATABLOCKSIZE) {
+
+          if(USE_SERIAL && VERBOSE) {
+            Serial.println("Oversize Payload");
+          }
+
           BufferPos = 0;
           return false;
         }
@@ -179,7 +191,10 @@ uint8_t ECODANDECODER::BuildRxMessage(MessageStruct *Message, uint8_t c)
     BufferPos = 0;
     if (CheckSum(Buffer, PayloadSize + HEADERSIZE) == c)
     {
-      //Serial.println("CS OK");
+      if(USE_SERIAL && VERBOSE) {
+        Serial.println("CS OK");
+      }
+
       Message->SyncByte = Buffer[0];
       Message->PacketType = Buffer[1];
       Message->Preamble[0] = Buffer[2];
@@ -191,7 +206,10 @@ uint8_t ECODANDECODER::BuildRxMessage(MessageStruct *Message, uint8_t c)
     }
     else
     {
-      //Serial.println("Checksum Fail");
+      if(USE_SERIAL && VERBOSE) {
+        Serial.println("Checksum Fail");
+      }
+
       return false;
     }
   }

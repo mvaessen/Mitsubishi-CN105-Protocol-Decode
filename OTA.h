@@ -21,15 +21,10 @@ void OTASetup(const char *HostName)
     Serial.println("End");
   });
 
-
-
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total)
   {
-    
     Serial.println( progress );
   });
-
-
 
   ArduinoOTA.onError([](ota_error_t error)
   {
@@ -59,5 +54,7 @@ void OTASetup(const char *HostName)
   });
 
   ArduinoOTA.setHostname(HostName);
+  ArduinoOTA.setPassword(OTA_PASSWORD);
+  ArduinoOTA.setPort(OTA_PORT);
   ArduinoOTA.begin();
 }

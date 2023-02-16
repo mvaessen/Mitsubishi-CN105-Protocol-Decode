@@ -1,7 +1,25 @@
-#define MQTT_SERVER Set_Your_MQTT_Server_Here //  Fill in below, and delete this line
-//#define MQTT_SERVER "192.168.1.1"
+#define DEVICE_NAME "Ecodan Heatpump"
+#define SOFTWARE_VERSION "0.0.1"
+
+#define HEATPUMP_STREAM SwSerial
+#define SERIAL_BAUD 2400
+#define SERIAL_CONFIG SWSERIAL_8E1
+
+//serial debug
+#define USE_SERIAL false
+
+//OTA
+#define USE_OTA false
+#define OTA_PASSWORD "pass12345"
+#define OTA_PORT 8266
+
+
+//MQTT
+#define USE_MQTT true
+#define MQTT_SERVER ""
 #define MQTT_PORT 1883
 
+#define MQTT_GATEWAY "heatpump"
 
 #define MQTT_BASETOPIC "Ecodan/HomeHeatPump"
 
@@ -28,9 +46,7 @@
 #define MQTT_COMMAND_SYSTEM_POWER MQTT_COMMAND_SYSTEM "/Power"
 #define MQTT_COMMAND_SYSTEM_TEMP MQTT_COMMAND_SYSTEM "/Temp"
 
-
 #define MQTT_LWT MQTT_BASETOPIC "/LWT"
 
-#define MQTT_USER  Set_Your_MQTT_User_Name_Here // Fill in below and delete this line
-//#define MQTT_USER "USER"
-#define MQTT_PASS "PASS"
+#define MQTT_USER ""
+#define MQTT_PASS ""

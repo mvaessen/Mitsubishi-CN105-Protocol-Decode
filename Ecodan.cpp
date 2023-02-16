@@ -15,10 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Ecodan.h"
+#include "config.h"
+#include "Debug.h"
 
 #include <ESPTelnet.h>
 extern ESPTelnet TelnetServer;
-#include "Debug.h"
 
 //[CONNECT_LEN] = {0xfc, 0x5a, 0x02, 0x7a, 0x02, 0xca, 0x01, 0x5d};
 
@@ -107,6 +108,11 @@ void ECODAN::StatusStateMachine(void)
 
   if (CurrentMessage != 0)
   {
+
+    if(USE_SERIAL && VERBOSE) {
+      Serial.println(CurrentMessage);
+    }
+
     //DEBUG_PRINT("Send Message "); DEBUG_PRINTLN(CurrentMessage);
     ECODANDECODER::CreateBlankTxMessage(GET_REQUEST, 0x10);
     ECODANDECODER::SetPayloadByte(ActiveCommand[CurrentMessage], 0);

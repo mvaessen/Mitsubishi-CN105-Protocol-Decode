@@ -220,7 +220,6 @@ private:
     MessageStruct TxMessage;
     
     
-
     uint8_t Preamble[PREAMBLESIZE];
 
     uint8_t  BuildRxMessage(MessageStruct *Message, uint8_t c);
@@ -231,7 +230,7 @@ private:
     
     uint16_t ExtractUInt16(uint8_t *Buffer, uint8_t Index);
     float    ExtractEnergy(uint8_t *Buffer, uint8_t index);
-    
+  
     
     uint8_t  CheckSum(uint8_t *Buffer, uint8_t len);
 
