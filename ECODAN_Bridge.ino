@@ -27,6 +27,7 @@
 #include <ESPTelnet.h>
 
 #include "MQTTService.h"
+#include "TelnetService.h"
 //#include "ReporterService.h"
 #include "Ecodan.h"
 #include "config.h"
@@ -37,8 +38,7 @@
 ECODAN HeatPump;
 //ReporterService Reporter;
 MQTTService MQTT;
-
-ESPTelnet TelnetServer;
+TelnetService Telnet;
 
 SoftwareSerial SwSerial;
 WiFiClient NetworkClient;
@@ -68,10 +68,9 @@ void setup()
   HeatPump.SetStream(&HEATPUMP_STREAM);
 
   MQTT.setup(HeatPump);
+  Telnet.setup();
 
   wifiManager();
-
-  // setupTelnet();
   
   if(USE_OTA) {
     OTASetup(HostName.c_str());
@@ -84,11 +83,11 @@ void loop()
   HeatPumpQuery2.Process();
   HeatPump.Process();
 
-  // TelnetServer.loop();
-
   MQTT.loop();
+  Telnet.loop();
 
   //todo init class for algo
+
   if(USE_OTA) {
     ArduinoOTA.handle();
   }
@@ -234,56 +233,4 @@ void wifiManager()
   }
 
   WiFi.hostname(getHostName());
-}
-
-
-
-
-
-void setupTelnet()
-{
-  TelnetServer.onConnect(onTelnetConnect);
-  TelnetServer.onConnectionAttempt(onTelnetConnectionAttempt);
-  TelnetServer.onReconnect(onTelnetReconnect);
-  TelnetServer.onDisconnect(onTelnetDisconnect);
-
-  DEBUG_PRINT("Telnet: ");
-
-  if (TelnetServer.begin()) {
-    DEBUG_PRINTLN("running");
-  } else {
-    DEBUG_PRINTLN("error.");
-    //errorMsg("Will reboot...");
-  }
-}
-
-void onTelnetConnect(String ip)
-{
-  DEBUG_PRINT("Telnet: ");
-  DEBUG_PRINT(ip);
-  DEBUG_PRINTLN(" connected");
-
-  TelnetServer.println("\nWelcome " + TelnetServer.getIP());
-  TelnetServer.println("(Use ^] + q  to disconnect.)");
-}
-
-void onTelnetDisconnect(String ip)
-{
-  DEBUG_PRINT("Telnet: ");
-  DEBUG_PRINT(ip);
-  DEBUG_PRINTLN(" disconnected");
-}
-
-void onTelnetReconnect(String ip)
-{
-  DEBUG_PRINT("Telnet: ");
-  DEBUG_PRINT(ip);
-  DEBUG_PRINTLN(" reconnected");
-}
-
-void onTelnetConnectionAttempt(String ip)
-{
-  DEBUG_PRINT("Telnet: ");
-  DEBUG_PRINT(ip);
-  DEBUG_PRINTLN(" tried to connected");
 }

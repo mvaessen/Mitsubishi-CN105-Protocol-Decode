@@ -1,7 +1,7 @@
 #define DEBUG 1
 #define VERBOSE 0
 
-#define DEBUGPORT TelnetServer
+#define DEBUGPORT Serial
 #define DEBUGBAUD 115200
 
 #ifdef  DEBUG=1
